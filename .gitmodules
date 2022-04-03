@@ -1,0 +1,4 @@
+[submodule "discord.sh"]
+	path = discord.sh
+	url = git@github.com:ChaoticWeg/discord.sh.git
+	branch = master
