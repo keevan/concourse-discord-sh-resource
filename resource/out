@@ -18,11 +18,33 @@ exec 1>&2 # redirect all output to stderr for logging
 
 source=$1
 
+# Passed in from concourse via stdin, with the format { "params": { ... }, "source": { ... } }
+# As mentioned here: https://concourse-ci.org/implementing-resource-types.html#resource-out
+# But will contain values you provide as part of the step.
 payload="$(cat <&0)"
 
-echo "$payload"
+# List of all variables expected
+params=""
+variables=( "text" "username" "message" "webhook-url" )
+for field in "${variables[@]}"; do
+    # Grab the field using jq
+    raw=`jq ".params.\"$field\"" <<< "$payload"`
+    # Interpolate any bash variables
+    value=`eval "echo $raw"`
 
-result=$(eval "echo $message")
-echo "Message: $result"
+    echo "$field: $value" # debugging~
 
-env
+    # Build the argument/param list for the discord.sh call
+    if [[ "$value" != "null" ]] ; then
+        params="${params} --${field}=\"${value}\""
+    fi
+done
+
+# Execute the command
+eval "/discord.sh/discord.sh $params"
+
+# Example:
+# /discord.sh/discord.sh --username "CI/CD" --text="$text"
+
+# Is this required? Probably..
+jq -n "{version: {}}" >&3
