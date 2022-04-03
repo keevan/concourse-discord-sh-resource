@@ -23,6 +23,11 @@ source=$1
 # But will contain values you provide as part of the step.
 payload="$(cat <&0)"
 
+# Fetch and set DISCORD_WEBHOOK env is value was provided. This allows for the
+# webhook order of priority to take effect. Note that the only option not
+# supported remaining is the ".webhook" file.
+export DISCORD_WEBHOOK=`jq -r '.source.DISCORD_WEBHOOK' <<< "$payload"`
+
 # List of all variables expected
 params=""
 variables=( "text" "username" "message" "webhook-url" )
