@@ -32,7 +32,7 @@ for field in "${variables[@]}"; do
     # Interpolate any bash variables
     value=`eval "echo $raw"`
 
-    echo "$field: $value" # debugging~
+    # echo "$field: $value" # debugging~
 
     # Build the argument/param list for the discord.sh call
     if [[ "$value" != "null" ]] ; then
