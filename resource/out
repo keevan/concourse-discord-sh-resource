@@ -36,15 +36,11 @@ params=""
 # Because I'm "lazy" and don't like hardcoding things, I'll grab the options
 # from the default discord.sh help prompt. If there are new options in the
 # future.. then it should "just work".
-variables=`/discord.sh/discord.sh --help \
-    # Filter lines containing the options. I checked, it seems all have the long form.
-    | grep -- -- \
-    # Remove all characters before the -- including itself, and everything after a space or =
-    | sed 's/^[^-]*--//;s/[ =].*//' \
-    # Sort the results
-    | sort \
-    # So we can only keep the unique results
-    | uniq`
+variables=(`/discord.sh/discord.sh --help |
+    grep -- -- |                    # Filter lines containing the options. I checked, it seems all have the long form.
+    sed 's/^[^-]*--//;s/[ =].*//' | # Remove all characters before the -- including itself, and everything after a space or =
+    sort |                          # Sort the results
+    uniq`)                          # So we can only keep the unique results
 
 for field in "${variables[@]}"; do
     # Grab the field using jq
